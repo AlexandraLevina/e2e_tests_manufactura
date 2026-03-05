@@ -1,52 +1,52 @@
 package io.testomat.e2e_tests_manufactura;
 
-import com.codeborne.selenide.CollectionCondition;
-import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import io.testomat.e2e_tests_manufactura.utils.StringParsers;
+import io.testomat.e2e_tests_manufactura.web.pages.NewProjectPage;
+import io.testomat.e2e_tests_manufactura.web.pages.ProjectPage;
+import io.testomat.e2e_tests_manufactura.web.pages.ProjectsPage;
+import io.testomat.e2e_tests_manufactura.web.pages.SignInPage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selectors.byText;
-import static com.codeborne.selenide.Selenide.*;
-import static io.testomat.e2e_tests_manufactura.utils.StringParsers.parseIntegerFromString;
-
 public class ProjectPageTests extends BaseTest {
 
-    static String baseUrl = env.get("BASE_URL") ;
-    static String userName = env.get("USER_NAME") ;
-    static String password = env.get("PASSWORD") ;
+    private static final ProjectsPage projectsPage = new ProjectsPage();
+    private static final SignInPage signInPage = new SignInPage();
+    private static final NewProjectPage newProjectPage = new NewProjectPage();
+    static String userName = env.get("USER_NAME");
+    static String password = env.get("PASSWORD");
+    private final ProjectPage projectPage = new ProjectPage();
     String targetProjectName = "PLY";
 
     @BeforeAll
     static void openTestomatAndLogin() {
-        open(baseUrl);
-        loginUser(userName, password);
-
+        signInPage.open();
+        signInPage.loginUser(userName, password);
+        projectsPage.signInSuccess();
     }
 
     @BeforeEach
-    void openHomePage() {
-        open(baseUrl);
+    void openProjectPage() {
+        projectsPage.open();
+        projectsPage.isLoaded();
     }
 
     @Test
     public void authorizedUserCanFindProjectAndOpenProjectTest() {
-        searchForProject(targetProjectName);
-        selectProject(targetProjectName);
-        waitForProjectPageIsLoaded(targetProjectName);
+        projectsPage.searchForProject(targetProjectName);
+        projectsPage.selectProject(targetProjectName);
+        projectPage.isLoaded(targetProjectName);
     }
 
     @Test
     public void checkCountOfTestsAndSignedUsersTest() {
-        searchForProject(targetProjectName);
-        SelenideElement targetProject = countOfProjectsShouldBeEqualsTo(1).first();
-        countOfTestsShouldBeEqualsTo(targetProject, 0);
-        countOfSignedUsersGraterThan(targetProject, 30);
+        projectsPage.searchForProject(targetProjectName);
+        SelenideElement targetProject = projectsPage.countOfProjectsShouldBeEqualsTo(1).first();
+        projectsPage.countOfTestsShouldBeEqualsTo(targetProject, 0);
+        projectsPage.countOfSignedUsersGraterThan(targetProject, 31);
     }
 
     @Test
@@ -65,48 +65,20 @@ public class ProjectPageTests extends BaseTest {
 
     @Test
     public void checkProjectBadgetTest() {
-        searchForProject(targetProjectName);
-        checkProjectBadget();
+        projectsPage.searchForProject(targetProjectName);
+        projectsPage.checkProjectBadget();
     }
 
-    private void checkProjectBadget() {
-        $("[title=\"PLY\"] span").shouldBe(visible).shouldHave(text("Classical"));
+    @Test
+    public void checkEnterprisePlan() {
+        projectsPage.checkEnterprisePlan();
     }
 
-    private void waitForProjectPageIsLoaded(String targetProjectName) {
-        $(".first h2").shouldHave(text(targetProjectName));
-        $(".first [href*='/readme']").shouldHave(text("Readme"));
+    @Test
+    public void createNewProject() {
+        projectsPage.createNewProject();
+        newProjectPage.open();
+        newProjectPage.isLoaded();
     }
 
-    private void selectProject(String targetProjectName) {
-        $(byText(targetProjectName)).click();
-    }
-
-    private void searchForProject(String targetProjectName) {
-        $("#search").setValue(targetProjectName);
-    }
-
-    private void countOfSignedUsersGraterThan(SelenideElement targetProject, int expectedCountOfSignedUsers) {
-        String countOfSignedUsersText = targetProject.$(" .text-gray-900.font-medium").getText();
-        Integer actualCountOfSignedUsers = parseIntegerFromString(countOfSignedUsersText);
-        Assertions.assertTrue(actualCountOfSignedUsers > expectedCountOfSignedUsers);
-    }
-
-    private void countOfTestsShouldBeEqualsTo(SelenideElement targetProject, int expectedCount) {
-        String countOfTestsText = targetProject.$(" p").getText();
-        Integer actualCountOfTests = parseIntegerFromString(countOfTestsText);
-        Assertions.assertEquals(expectedCount, actualCountOfTests);
-    }
-
-    private ElementsCollection countOfProjectsShouldBeEqualsTo(int expectedSize) {
-        return $$(" #grid ul li").filter(visible).shouldHave(CollectionCondition.size(expectedSize));
-    }
-
-    public static void loginUser(String mail, String password) {
-        $("#content-desktop #user_email").setValue(mail);
-        $("#content-desktop #user_password").setValue(password);
-        $("#content-desktop #user_remember_me").click();
-        $("#content-desktop [name=\"commit\"]").click();
-        $(".common-flash-success").shouldBe(visible);
-    }
 }
