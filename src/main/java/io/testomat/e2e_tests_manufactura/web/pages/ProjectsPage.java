@@ -1,9 +1,6 @@
 package io.testomat.e2e_tests_manufactura.web.pages;
 
-import com.codeborne.selenide.CollectionCondition;
-import com.codeborne.selenide.ElementsCollection;
-import com.codeborne.selenide.Selenide;
-import com.codeborne.selenide.SelenideElement;
+import com.codeborne.selenide.*;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
@@ -19,17 +16,18 @@ public class ProjectsPage {
         Selenide.open("");
     }
 
-    public void isLoaded() {
+    public ProjectsPage isLoaded() {
         searchInput.shouldBe(visible);
-
+        return this;
     }
 
     public void selectProject(String targetProjectName) {
         $(byText(targetProjectName)).click();
     }
 
-    public void searchForProject(String targetProjectName) {
+    public ProjectsPage searchForProject(String targetProjectName) {
         searchInput.setValue(targetProjectName);
+        return this;
     }
 
     public void signInSuccess() {
