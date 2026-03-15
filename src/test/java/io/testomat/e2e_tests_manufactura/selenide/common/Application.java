@@ -1,6 +1,6 @@
-package io.testomat.e2e_tests_manufactura.common;
+package io.testomat.e2e_tests_manufactura.selenide.common;
 
-import io.testomat.e2e_tests_manufactura.web.pages.*;
+import io.testomat.e2e_tests_manufactura.selenide.web.pages.*;
 
 public class Application {
 

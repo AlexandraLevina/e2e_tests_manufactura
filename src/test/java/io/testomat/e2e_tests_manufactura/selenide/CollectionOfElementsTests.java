@@ -1,4 +1,4 @@
-package io.testomat.e2e_tests_manufactura;
+package io.testomat.e2e_tests_manufactura.selenide;
 
 import com.codeborne.selenide.*;
 import org.junit.jupiter.api.DisplayName;

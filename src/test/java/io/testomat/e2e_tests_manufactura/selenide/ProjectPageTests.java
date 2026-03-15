@@ -1,7 +1,7 @@
-package io.testomat.e2e_tests_manufactura;
+package io.testomat.e2e_tests_manufactura.selenide;
 
 import com.codeborne.selenide.SelenideElement;
-import io.testomat.e2e_tests_manufactura.utils.StringParsers;
+import io.testomat.e2e_tests_manufactura.selenide.utils.StringParsers;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
